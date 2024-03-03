@@ -15,7 +15,7 @@ def render_template(template_path, variables, result_path):
         with open(template_path) as file:
             template = Template(file.read())
             render_result = template.render(variables)
-            with open(result_path, 'a+') as var_file:
+            with open(result_path, 'w+') as var_file:
                 var_file.write(render_result)
             # ToDo: return proper result
             return 'hi'

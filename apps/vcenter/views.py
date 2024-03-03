@@ -30,6 +30,8 @@ class CreateVMView(views.APIView):
         if serializer.is_valid():
             try:
                 terraform_vars = serializer.validated_data
+                terraform_vars['vm_name'] = vm_name
+
                 module_path = get_module_path(vm_name)
                 render_template(TerraformConf.template_path, terraform_vars,
                                 f'{module_path}/terraform.tfvars')
