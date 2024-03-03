@@ -92,4 +92,4 @@ def get_module_path(vm_name, module_path=Path.vm_modules_path):
     for root, dirs, files in os.walk(module_path):
         if vm_name in dirs:
             return os.path.join(root, vm_name)
-    return None
+    raise VMDirectoryExistsException('No such file or directory')

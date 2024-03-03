@@ -7,26 +7,36 @@ from common.utilities import render_template, create_terraform_module, apply_ter
 
 class CreateVMView(views.APIView):
     def post(self, request):
-        serializer = CreateVMSerializer(data=request.data)
-        if serializer.is_valid():
-            terraform_vars = serializer.validated_data
-            module_path = create_terraform_module(terraform_vars['vm_name'])
-            render_template(TerraformConf.template_path, terraform_vars,
-                            f'{module_path}/terraform.tfvars')
-            tf_result = apply_terraform_module(module_path)
-            # handle tf_result status code for errors in apply
-            return response.Response({'terraform_result': tf_result})
-        return response.Response(serializer.errors, status=400)
+        try:
+            serializer = CreateVMSerializer(data=request.data)
+            if serializer.is_valid():
+                terraform_vars = serializer.validated_data
+                module_path = create_terraform_module(terraform_vars['vm_name'])
+                render_template(TerraformConf.template_path, terraform_vars,
+                                f'{module_path}/terraform.tfvars')
+                tf_result = apply_terraform_module(module_path)
+                # Todo: handle tf_result status code for errors in apply
+                return response.Response({'terraform_result': tf_result})
+
+            return response.Response(serializer.errors, status=400)
+
+        except Exception as e:
+
+            return response.Response({'error': str(e)}, status=400)
 
     def put(self, request, vm_name):
 
         serializer = UpdateVMSerializer(data=request.data)
         if serializer.is_valid():
-            terraform_vars = serializer.validated_data
-            module_path = get_module_path(terraform_vars['vm_name'])
-            render_template(TerraformConf.template_path, terraform_vars,
-                            f'{module_path}/terraform.tfvars')
-            tf_result = apply_terraform_module(module_path)
-            # handle tf_result status code for errors in apply
-            return response.Response({'terraform_result': tf_result})
+            try:
+                terraform_vars = serializer.validated_data
+                module_path = get_module_path(terraform_vars['vm_name'])
+                render_template(TerraformConf.template_path, terraform_vars,
+                                f'{module_path}/terraform.tfvars')
+                tf_result = apply_terraform_module(module_path)
+                # Todo: handle tf_result status code for errors in apply
+                return response.Response({'terraform_result': tf_result})
+            except Exception as e:
+
+                return response.Response({'error': str(e)}, status=400)
         return response.Response(serializer.errors, status=400)
