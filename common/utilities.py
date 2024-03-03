@@ -1,6 +1,7 @@
 import shutil
 from datetime import date
 from random import randint
+import re
 
 from jinja2 import Template
 from python_terraform import Terraform
@@ -35,10 +36,23 @@ def create_terraform_module(vm_name, module_path=Path.vm_modules_path):
         raise e
 
 
+def format_terraform_result(terraform_result):
+    ret_code, out, err = terraform_result
+    result_dict = {}
+    if ret_code == 0:
+        output = re.findall(r'Plan: (\d+) to add, (\d+) to change, (\d+) to destroy', out)
+        result_dict['add'], result_dict['change'], result_dict['destroy'] = map(int, output[0])
+    else:
+        result_dict['error'] = str(err)
+    return result_dict
+
+
 def apply_terraform_module(module_path):
     try:
         tf = Terraform(working_dir=module_path)
-        tf.apply(skip_plan=True)
+        terraform_result = tf.apply(skip_plan=True)
+        formatted_result = format_terraform_result(str(terraform_result))
+        return formatted_result
     except Exception as e:
         print('Error at apply terraform :')
         print(e)
