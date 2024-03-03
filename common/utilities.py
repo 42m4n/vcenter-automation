@@ -51,7 +51,7 @@ def apply_terraform_module(module_path):
     try:
         tf = Terraform(working_dir=module_path)
         terraform_result = tf.apply(skip_plan=True)
-        formatted_result = format_terraform_result(str(terraform_result))
+        formatted_result = format_terraform_result(terraform_result)
         return formatted_result
     except Exception as e:
         print('Error at apply terraform :')
