@@ -24,7 +24,7 @@ class CreateVMView(views.APIView):
 
             return response.Response({'error': str(e)}, status=400)
 
-    def put(self, request, vm_name):
+    def put(self, request, vm_name=None):
 
         serializer = UpdateVMSerializer(data=request.data)
         if serializer.is_valid():
