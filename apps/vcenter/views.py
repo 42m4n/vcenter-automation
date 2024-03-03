@@ -10,14 +10,9 @@ class CreateVMView(views.APIView):
         serializer = CreateVMSerializer(data=request.data)
         if serializer.is_valid():
             terraform_vars = serializer.validated_data
-            print('^^^^^')
-            print(terraform_vars['vm_name'])
             module_path = create_terraform_module(terraform_vars['vm_name'])
-            print('MP:')
-            print(module_path)
-            rendered_template = render_template(TerraformConf.template_path, terraform_vars,
-                                                f'{module_path}/terraform.tfvars')
-            print('render done')
-            apply_terraform_module(module_path)
-            return response.Response({'terraform_vars': rendered_template})
+            render_template(TerraformConf.template_path, terraform_vars,
+                            f'{module_path}/terraform.tfvars')
+            tf_result = apply_terraform_module(module_path)
+            return response.Response({'terraform_result': tf_result})
         return response.Response(serializer.errors, status=400)
