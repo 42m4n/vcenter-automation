@@ -2,7 +2,7 @@ from rest_framework import views, response
 
 from apps.vcenter.serializers import CreateVMSerializer, UpdateVMSerializer
 from common.configs import TerraformConf
-from common.utilities import render_template, create_terraform_module, apply_terraform_module, get_module_path, my_func
+from common.utilities import render_template, create_terraform_module, apply_terraform_module
 
 
 class CreateVMView(views.APIView):
