@@ -2,11 +2,12 @@ import shutil
 from datetime import date
 from random import randint
 import re
-
+import os
 from jinja2 import Template
 from python_terraform import Terraform
 
 from common.configs import Path, TerraformConf
+from common.exceptions import VMDirectoryExistsException
 
 
 def render_template(template_path, variables, result_path):
@@ -24,12 +25,25 @@ def render_template(template_path, variables, result_path):
         raise e
 
 
+def check_directory_existence(vm_name, directory_path=Path.vm_modules_path):
+    for root, dirs, files in os.walk(directory_path):
+        for dir in dirs:
+            if vm_name in dir:
+                return True
+    return False
+
+
 def create_terraform_module(vm_name, module_path=Path.vm_modules_path):
     try:
-        unique_name = generate_module_name(vm_name)
-        module_path = f"{module_path}/{unique_name}"
-        shutil.copytree(TerraformConf.base_init_path, module_path)
-        return module_path
+        created = check_directory_existence(vm_name)
+        if not created:
+            unique_name = generate_module_name(vm_name)
+            module_path = f"{module_path}/{unique_name}"
+            shutil.copytree(TerraformConf.base_init_path, module_path)
+            return module_path
+        else:
+            raise VMDirectoryExistsException('Directory already exists.')
+
     except Exception as e:
         print('Error at render create terraform module:')
         print(e)
@@ -62,6 +76,7 @@ def apply_terraform_module(module_path):
 def generate_module_name(vm_name):
     today = str(date.today()).replace("-", "_")
     unique_name = f"{today}_{vm_name}_{randint(1, 100000)}"
+
     return unique_name
 
 
@@ -71,3 +86,10 @@ def initialize_terraform(working_dir):
         tf.init()
     except Exception:
         pass
+
+
+def get_module_path(vm_name, module_path=Path.vm_modules_path):
+    for root, dirs, files in os.walk(module_path):
+        if vm_name in dirs:
+            return os.path.join(root, vm_name)
+    return None
