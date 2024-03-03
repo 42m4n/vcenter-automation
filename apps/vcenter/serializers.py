@@ -28,7 +28,6 @@ class UpdateVMSerializer(serializers.Serializer):
     vsphere_cluster = serializers.CharField(required=False)
     vm_datastore = serializers.CharField(required=False)
     vm_network = serializers.CharField(required=False)
-    vm_name = serializers.CharField()
     vm_cpu = serializers.IntegerField(required=False)
     vm_ram = serializers.IntegerField(required=False)
     vm_guest = serializers.CharField(required=False)

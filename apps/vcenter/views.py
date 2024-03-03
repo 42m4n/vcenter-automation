@@ -2,7 +2,7 @@ from rest_framework import views, response
 
 from apps.vcenter.serializers import CreateVMSerializer, UpdateVMSerializer
 from common.configs import TerraformConf
-from common.utilities import render_template, create_terraform_module, apply_terraform_module, get_module_path
+from common.utilities import render_template, create_terraform_module, apply_terraform_module, get_module_path, my_func
 
 
 class CreateVMView(views.APIView):
@@ -30,7 +30,7 @@ class CreateVMView(views.APIView):
         if serializer.is_valid():
             try:
                 terraform_vars = serializer.validated_data
-                module_path = get_module_path(terraform_vars['vm_name'])
+                module_path = my_func(vm_name)
                 render_template(TerraformConf.template_path, terraform_vars,
                                 f'{module_path}/terraform.tfvars')
                 tf_result = apply_terraform_module(module_path)

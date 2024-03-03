@@ -75,7 +75,7 @@ def apply_terraform_module(module_path):
 
 def generate_module_name(vm_name):
     today = str(date.today()).replace("-", "_")
-    unique_name = f"{today}_{vm_name}_{randint(1, 100000)}"
+    unique_name = f"{today}_{randint(1, 100000)}_{vm_name}"
 
     return unique_name
 
@@ -88,8 +88,11 @@ def initialize_terraform(working_dir):
         pass
 
 
-def get_module_path(vm_name, module_path=Path.vm_modules_path):
-    for root, dirs, files in os.walk(module_path):
-        if vm_name in dirs:
-            return os.path.join(root, vm_name)
+def get_module_path(vm_name):
+    directories = [d for d in os.listdir(Path.vm_modules_path) if os.path.isdir(os.path.join(Path.vm_modules_path, d))]
+    for folder in directories:
+        f_name = folder.split('_')
+        f_name = '_'.join(f_name[4:])
+        if f_name == vm_name:
+            return f'{Path.vm_modules_path}/{f_name}'
     raise VMDirectoryExistsException('No such file or directory')
