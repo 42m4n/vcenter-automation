@@ -3,6 +3,6 @@ class Path:
 
 
 class TerraformConf:
-    base_init_path = './terraform1/'
+    base_init_path = './terraform/'
     template_path = 'terraform/terraform.tfvars.j2'
     variables_path = 'terraform/terraform.tfvars'
