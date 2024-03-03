@@ -5,7 +5,7 @@ class CreateVMSerializer(serializers.Serializer):
     vsphere_user = serializers.CharField()
     vsphere_password = serializers.CharField()
     vsphere_vcenter = serializers.CharField()
-    vsphere_unverified_ssl = serializers.BooleanField()
+    # vsphere_unverified_ssl = serializers.BooleanField()
     vsphere_datacenter = serializers.CharField()
     vsphere_cluster = serializers.CharField()
     vm_datastore = serializers.CharField()
