@@ -96,3 +96,9 @@ def get_module_path(vm_name):
         if f_name == vm_name:
             return f'{Path.vm_modules_path}/{folder}'
     raise VMDirectoryExistsException('No such file or directory')
+
+
+def keep_old_version(module_path):
+    today = str(date.today()).replace("-", "_")
+    shutil.copy(f'{module_path}/main.tf', f'{module_path}/{today}_main.tf')
+
