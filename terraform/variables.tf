@@ -56,5 +56,5 @@ variable "vm_disk_size" {
 variable "vm_disk_label" {
 }
 
-variable "vm_core_per_socket" {
+variable "vm_num_cores_per_socket" {
 }
