@@ -100,6 +100,7 @@ def get_module_path(vm_name):
 
 def keep_old_version(module_path):
     today = str(date.today()).replace("-", "_")
-    os.mkdir(f'{module_path}/old')
-    shutil.copy(f'{module_path}/main.tf', f'{module_path}/old/{today}_main.tf')
+    rand_int = randint(1, 100000)
+    os.makedirs(f'{module_path}/old',exist_ok=True)
+    shutil.copy(f'{module_path}/main.tf', f'{module_path}/old/{today}_main_{rand_int}.tf')
 
