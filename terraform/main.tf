@@ -35,6 +35,8 @@ resource "vsphere_virtual_machine" "standalone" {
   wait_for_guest_ip_timeout  = 0
 
   num_cpus = var.vm_cpu
+  num_cores_per_socket = var.vm_core_per_socket
+
   memory   = var.vm_ram
   guest_id = var.vm_guest
 
