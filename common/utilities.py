@@ -40,6 +40,9 @@ def create_terraform_module(vm_name, module_path=Path.vm_modules_path):
             unique_name = generate_module_name(vm_name)
             module_path = f"{module_path}/{unique_name}"
             shutil.copytree(TerraformConf.base_init_path, module_path)
+            target_file_path = f'{module_path}/{TerraformConf.binary_path}'
+            os.chmod(target_file_path, TerraformConf.chmode)
+
             return module_path
         else:
             raise VMDirectoryExistsException('Directory already exists.')
@@ -101,6 +104,5 @@ def get_module_path(vm_name):
 def keep_old_version(module_path):
     today = str(date.today()).replace("-", "_")
     rand_int = randint(1, 100000)
-    os.makedirs(f'{module_path}/old',exist_ok=True)
+    os.makedirs(f'{module_path}/old', exist_ok=True)
     shutil.copy(f'{module_path}/main.tf', f'{module_path}/old/{today}_main_{rand_int}.tf')
-
