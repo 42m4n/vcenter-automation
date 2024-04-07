@@ -20,7 +20,7 @@ class CreateVMView(views.APIView):
                 module_path = create_terraform_module(terraform_vars['vm_name'])
                 render_template(TerraformConf.template_path, terraform_vars,
                                 f'{module_path}/terraform.tfvars')
-                # tf_result = apply_terraform_module(module_path)
+                tf_result = apply_terraform_module(module_path)
                 # Todo: handle tf_result status code for errors in apply
                 return response.Response({'terraform_result': tf_result})
 
