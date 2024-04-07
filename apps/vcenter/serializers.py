@@ -18,9 +18,6 @@ class CreateVMSerializer(serializers.Serializer):
 
 
 class UpdateVMSerializer(serializers.Serializer):
-    vsphere_user = serializers.CharField()
-    vsphere_password = serializers.CharField()
-    vsphere_vcenter = serializers.CharField()
 
     vsphere_datacenter = serializers.CharField(required=False)
     vsphere_cluster = serializers.CharField(required=False)
