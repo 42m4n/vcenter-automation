@@ -17,9 +17,10 @@ class CreateVMView(views.APIView):
                     'vsphere_password': VCenterConf.password,
                     'vsphere_vcenter': VCenterConf.vcenter_address
                 })
-                module_path = create_terraform_module(terraform_vars['vm_name'])
+                module_path = create_terraform_module(terraform_vars['name'])
                 render_template(TerraformConf.template_path, terraform_vars,
                                 f'{module_path}/terraform.tfvars')
+
                 tf_result = apply_terraform_module(module_path)
                 # Todo: handle tf_result status code for errors in apply
                 return response.Response({'terraform_result': tf_result})
@@ -37,7 +38,7 @@ class CreateVMView(views.APIView):
             try:
                 terraform_vars = serializer.validated_data
                 terraform_vars.update({
-                    'vm_name':vm_name,
+                    'name': vm_name,
                     'vsphere_user': VCenterConf.user,
                     'vsphere_password': VCenterConf.password,
                     'vsphere_vcenter': VCenterConf.vcenter_address
