@@ -1,7 +1,6 @@
 from rest_framework import views, response
-import json
 
-from apps.vcenter.serializers import CreateVMSerializer, UpdateVMSerializer, PaasSerializer
+from apps.vcenter.serializers import CreateVMSerializer, UpdateVMSerializer
 from common.configs import TerraformConf, VCenterConf
 from common.utilities import render_template, create_terraform_module, apply_terraform_module, get_module_path, \
     keep_old_version
@@ -9,37 +8,56 @@ from common.utilities import render_template, create_terraform_module, apply_ter
 
 class CreateVMView(views.APIView):
     def post(self, request):
-        try:
-            serializer = PaasSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                if serializer.is_valid():
-                    serializer_validated_data = json.loads(serializer.validated_data['content'])
-                    print('****This is serializer data')
-                    print(serializer_validated_data)
+        serializer = CreateVMSerializer(data=request.udf_data)
+        if serializer.is_valid():
+            terraform_vars = serializer.validated_data
+            terraform_vars.update({
+                'vsphere_user': VCenterConf.user,
+                'vsphere_password': VCenterConf.password,
+                'vsphere_vcenter': VCenterConf.vcenter_address
+            })
+            module_path = create_terraform_module(terraform_vars['name'])
+            render_template(TerraformConf.template_path, terraform_vars,
+                            f'{module_path}/terraform.tfvars')
 
-            # serializer = CreateVMSerializer(data=request.data)
-            # if serializer.is_valid():
-            #     serializer_validated_data = json.loads(serializer.validated_data['content'])
-
-            #     terraform_vars = serializer.validated_data
-            #     terraform_vars.update({
-            #         'vsphere_user': VCenterConf.user,
-            #         'vsphere_password': VCenterConf.password,
-            #         'vsphere_vcenter': VCenterConf.vcenter_address
-            #     })
-            #     module_path = create_terraform_module(terraform_vars['name'])
-            #     render_template(TerraformConf.template_path, terraform_vars,
-            #                     f'{module_path}/terraform.tfvars')
-            #
-            #     tf_result = apply_terraform_module(module_path)
-            #     # Todo: handle tf_result status code for errors in apply
-                return response.Response({'terraform_result': tf_result})
-
+            tf_result = apply_terraform_module(module_path)
+            return response.Response({'terraform_result': tf_result})
+        else:
             return response.Response(serializer.errors, status=400)
 
-        except Exception as e:
-
-            return response.Response({'error': str(e)}, status=400)
+    # class CreateVMView(views.APIView):
+    #     def post(self, request):
+    #         try:
+    #             serializer = PaasSerializer(data=request.data)
+    #             if serializer.is_valid(raise_exception=True):
+    #                 if serializer.is_valid():
+    #                     serializer_validated_data = json.loads(serializer.validated_data['content'])
+    #                     print('****This is serializer data')
+    #                     print(serializer_validated_data)
+    #
+    #             serializer = CreateVMSerializer(data=request.data)
+    #             if serializer.is_valid():
+    #                 serializer_validated_data = json.loads(serializer.validated_data['content'])
+    #
+    #                 terraform_vars = serializer.validated_data
+    #                 terraform_vars.update({
+    #                     'vsphere_user': VCenterConf.user,
+    #                     'vsphere_password': VCenterConf.password,
+    #                     'vsphere_vcenter': VCenterConf.vcenter_address
+    #                 })
+    #                 module_path = create_terraform_module(terraform_vars['name'])
+    #                 render_template(TerraformConf.template_path, terraform_vars,
+    #                                 f'{module_path}/terraform.tfvars')
+    #
+    #                 tf_result = apply_terraform_module(module_path)
+    #                 # Todo: handle tf_result status code for errors in apply
+    #                 return response.Response({'terraform_result': tf_result})
+    #
+    #             return response.Response(serializer.errors, status=400)
+    #
+    #         except Exception as e:
+    #
+    #             return response.Response({'error': str(e)}, status=400)
 
     def put(self, request, vm_name=None):
 
