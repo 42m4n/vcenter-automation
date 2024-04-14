@@ -4,21 +4,21 @@
 #===============================================================================
 
 data "vsphere_datacenter" "dc" {
-  name = var.vsphere_datacenter
+  name = var.datacenter
 }
 
 data "vsphere_compute_cluster" "cluster" {
-  name          = var.vsphere_cluster
+  name          = var.cluster
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_datastore" "datastore" {
-  name          = var.vm_datastore
+  name          = var.datastore
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "network" {
-  name          = var.vm_network
+  name          = var.network
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -27,27 +27,27 @@ data "vsphere_network" "network" {
 #===============================================================================
 
 resource "vsphere_virtual_machine" "standalone" {
-  name             = var.vm_name
+  name             = var.name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
 
   wait_for_guest_net_timeout = 0
   wait_for_guest_ip_timeout  = 0
 
-  num_cpus = var.vm_cpu
-  num_cores_per_socket = var.vm_num_cores_per_socket
+  num_cpus = var.cpu
+  num_cores_per_socket = var.num_cores_per_socket
 
-  memory   = var.vm_ram
-  guest_id = var.vm_guest
+  memory   = var.ram
+  guest_id = var.guest_os
 
   network_interface {
     network_id   = data.vsphere_network.network.id
-    adapter_type   = var.vm_network_adapter_type
+    adapter_type   = var.network_adapter_type
   }
 
   disk {
-   size             = var.vm_disk_size
-   label            =var.vm_disk_label
+   size             = var.disk_size
+   label            =var.disk_label
   }
 
 }
