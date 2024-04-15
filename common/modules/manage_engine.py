@@ -8,7 +8,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class ManageEngine:
     print('ManageEngine')
 
-    def __int__(self):
+    def __init__(self):
         self.udf_fields_mapping = ManageEngineConf.udf_fields_mapping
         self.ticket_base_api = f"{ManageEngineConf.manage_engine_address}/api/v3/requests"
         self.headers = {"authtoken": f"{ManageEngineConf.manage_engine_token}"}
