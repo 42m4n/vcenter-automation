@@ -76,13 +76,16 @@ def format_terraform_result(terraform_result):
         raise e
 
 
-def apply_terraform_module(module_path, ticket_id, vm_name):
+def apply_terraform_module(module_path, ticket_id, vm_name, created=True):
     try:
         tf = Terraform(working_dir=module_path)
         terraform_result = tf.apply(skip_plan=True)
         formatted_result, success = format_terraform_result(terraform_result)
         if success:
-            note = f'VM {vm_name} created successfully.'
+            if not created:
+                note = f'VM {vm_name} updated successfully.'
+            else:
+                note = f'VM {vm_name} created successfully.'
             # ToDo: use celery and async request
             print('success apply and format')
             ManageEngine().add_note_to_ticket(ticket_id, note)

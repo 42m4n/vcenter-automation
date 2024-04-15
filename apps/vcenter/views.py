@@ -64,7 +64,9 @@ class CreateVMView(views.APIView):
             udf_serializer = ManageEngineSerializer(data=request.data)
             udf_serializer.is_valid(raise_exception=True)
             udf_data = json.loads(udf_serializer.validated_data['content'])
-            udf_fields = udf_data['request']['udf_fields']
+            ticket_request = udf_data['request']
+            ticket_id = ticket_request['id']
+            udf_fields = ticket_request['udf_fields']
 
             mapped_data = {}
             udf_fields_map = ManageEngine().udf_fields_mapping
@@ -85,7 +87,7 @@ class CreateVMView(views.APIView):
                 keep_old_version(module_path)
                 render_template(TerraformConf.template_path, terraform_vars,
                                 f'{module_path}/terraform.tfvars')
-                tf_result = apply_terraform_module(module_path)
+                tf_result = apply_terraform_module(module_path, ticket_id=ticket_id, vm_name=vm_name, created=False)
                 # Todo: handle tf_result status code for errors in apply
                 return response.Response({'terraform_result': tf_result})
 
