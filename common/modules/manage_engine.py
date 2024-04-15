@@ -24,7 +24,7 @@ class ManageEngine:
                 "add_to_linked_requests": True
             }
         }
-        self.send_request(ticket_id, comment_input_data, method='CHANGE_STATUS')
+        self.send_request(ticket_id, comment_input_data, method='ADD_NOTE')
         print('add_note_to_ticket Finish')
 
     def change_ticket_status(self, ticket_id, status):
