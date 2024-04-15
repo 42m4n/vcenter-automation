@@ -38,13 +38,15 @@ class ManageEngine:
 
     def send_request(self, ticket_id, data, method):
         url = f'{self.ticket_base_api}/{ticket_id}'
+        comment_url = f"{url}/notes"
+
         data = {'input_data': data}
 
         try:
             print('send_request')
             if method == 'ADD_NOTE':
                 print('ADD_NOTE')
-                response = requests.post(url, headers=self.headers, json=data, verify=False)
+                response = requests.post(comment_url, headers=self.headers, json=data, verify=False)
                 print('ADD_NOTE Sent')
                 response.raise_for_status()
 
