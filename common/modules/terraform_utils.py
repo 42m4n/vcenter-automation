@@ -128,7 +128,7 @@ def get_module_path(vm_name):
             f_name = '_'.join(f_name[4:])
             if f_name == vm_name:
                 return f'{Path.vm_modules_path}/{folder}'
-            raise VMDirectoryExistsException('No such file or directory')
+        raise VMDirectoryExistsException('No such file or directory')
     except Exception as e:
         print('Exception at get_module_path')
         print(e)
