@@ -84,10 +84,13 @@ def apply_terraform_module(module_path, ticket_id, vm_name):
         if success:
             note = f'VM {vm_name} created successfully.'
             # ToDo: use celery and async request
+            print('success apply and format')
             ManageEngine().add_note_to_ticket(ticket_id, note)
+            print('after send note S')
         else:
             note = f'Create VM {vm_name} failed.'
             ManageEngine().add_note_to_ticket(ticket_id, note)
+            print('after send note F')
 
         return formatted_result
     except Exception as e:

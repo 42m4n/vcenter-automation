@@ -6,12 +6,16 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class ManageEngine:
+    print('ManageEngine')
+
     def __int__(self):
         self.udf_fields_mapping = ManageEngineConf.udf_fields_mapping
         self.ticket_base_api = f"{ManageEngineConf.manage_engine_address}/api/v3/requests"
         self.headers = {"authtoken": f"{ManageEngineConf.manage_engine_token}"}
 
     def add_note_to_ticket(self, ticket_id, message):
+        print('add_note_to_ticket')
+
         comment_input_data = {
             "note": {
                 "description": message,
@@ -21,6 +25,7 @@ class ManageEngine:
             }
         }
         self.send_request(ticket_id, comment_input_data, method='CHANGE_STATUS')
+        print('add_note_to_ticket Finish')
 
     def change_ticket_status(self, ticket_id, status):
         status_input_data = {
@@ -36,9 +41,11 @@ class ManageEngine:
         data = {'input_data': data}
 
         try:
+            print('send_request')
             if method == 'ADD_NOTE':
-
+                print('ADD_NOTE')
                 response = requests.post(url, headers=self.headers, json=data, verify=False)
+                print('ADD_NOTE Sent')
                 response.raise_for_status()
 
             elif method == 'CHANGE_STATUS':

@@ -39,16 +39,22 @@ class CreateVMView(views.APIView):
                 module_path = create_terraform_module(vm_name)
                 render_template(TerraformConf.template_path, terraform_vars,
                                 f'{module_path}/terraform.tfvars')
+                print('after render')
 
-                tf_result = apply_terraform_module(module_path, ticket_id,vm_name)
+                tf_result = apply_terraform_module(module_path, ticket_id, vm_name)
+                print('after apply in view')
                 if 'error' in tf_result:
+                    print('error in apply in view')
                     return response.Response({'terraform_result': tf_result}, status=400)
 
                 return response.Response({'terraform_result': tf_result})
             else:
+                print('error in serializer in view')
+
                 return response.Response(serializer.errors, status=400)
         except Exception as e:
-
+            print('>>>>>>>>>>>>>Exception in view:')
+            print(e)
             return response.Response({'error': str(e)}, status=400)
 
     def put(self, request, vm_name=None):
