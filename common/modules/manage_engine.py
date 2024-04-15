@@ -40,19 +40,19 @@ class ManageEngine:
         url = f'{self.ticket_base_api}/{ticket_id}'
         comment_url = f"{url}/notes"
 
-        data = {'input_data': data}
+        data = {'input_data': str(data)}
 
         try:
             print('send_request')
             if method == 'ADD_NOTE':
                 print('ADD_NOTE')
-                response = requests.post(comment_url, headers=self.headers, json=data, verify=False)
+                response = requests.post(comment_url, headers=self.headers, data=data, verify=False)
                 print('ADD_NOTE Sent')
                 response.raise_for_status()
 
             elif method == 'CHANGE_STATUS':
 
-                response = requests.put(url, headers=self.headers, json=data, verify=False)
+                response = requests.put(url, headers=self.headers, data=data, verify=False)
                 response.raise_for_status()
 
         except requests.exceptions.RequestException as e:

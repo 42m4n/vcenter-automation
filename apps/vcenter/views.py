@@ -45,6 +45,7 @@ class CreateVMView(views.APIView):
                 print('after apply in view')
                 if 'error' in tf_result:
                     print('error in apply in view')
+                    print('terraform_result', tf_result)
                     return response.Response({'terraform_result': tf_result}, status=400)
 
                 return response.Response({'terraform_result': tf_result})
