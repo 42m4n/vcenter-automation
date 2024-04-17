@@ -1,0 +1,3 @@
+class VMDirectoryExistsException(Exception):
+
+    pass
