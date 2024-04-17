@@ -15,10 +15,10 @@ variable "vsphere_unverified_ssl" {
 }
 
 
-variable "vsphere_datacenter" {
+variable "datacenter" {
 }
 
-variable "vsphere_cluster" {
+variable "cluster" {
 }
 
 
@@ -27,34 +27,34 @@ variable "vsphere_cluster" {
 #=========================#
 
 
-variable "vm_datastore" {
+variable "datastore" {
 }
 
-variable "vm_network" {
+variable "network" {
 }
 
-variable "vm_name" {
-}
-
-
-variable "vm_cpu" {
-}
-
-variable "vm_ram" {
-}
-
-variable "vm_guest" {
-}
-variable "vm_network_adapter_type" {
+variable "name" {
 }
 
 
-variable "vm_disk_size" {
+variable "cpu" {
+}
+
+variable "ram" {
+}
+
+variable "guest_os" {
+}
+variable "network_adapter_type" {
 }
 
 
-variable "vm_disk_label" {
+variable "disk_size" {
 }
 
-variable "vm_num_cores_per_socket" {
+
+variable "disk_label" {
+}
+
+variable "num_cores_per_socket" {
 }
