@@ -1,8 +1,11 @@
 from rest_framework import serializers
 
 
-class CreateVMSerializer(serializers.Serializer):
+class ManageEngineSerializer(serializers.Serializer):
+    content = serializers.CharField(required=True, allow_null=False)
 
+
+class CreateVMSerializer(serializers.Serializer):
     datacenter = serializers.CharField()
     cluster = serializers.CharField()
     datastore = serializers.CharField()
@@ -18,7 +21,6 @@ class CreateVMSerializer(serializers.Serializer):
 
 
 class UpdateVMSerializer(serializers.Serializer):
-
     datacenter = serializers.CharField(required=False)
     cluster = serializers.CharField(required=False)
     datastore = serializers.CharField(required=False)
