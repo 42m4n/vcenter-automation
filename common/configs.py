@@ -35,7 +35,7 @@ class ManageEngineConf:
         "udf_sline_1524": "cpu",
         "udf_long_5420": "num_cores_per_socket",
         "udf_sline_1525": "ram",
-        "udf_sline_5425": "guest_os",
+        "udf_pick_5434": "guest_os",
         "udf_pick_5422": "network_adapter_type",
         "udf_sline_5423": "disk_size",
         "udf_sline_5424": "disk_label",
