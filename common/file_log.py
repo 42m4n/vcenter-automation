@@ -6,7 +6,8 @@ class DjangoLogHandler(logging.Handler):
     def emit(self, record):
         try:
             msg = self.format(record)
-            logger.opt(depth=1, exception=None).log(record.levelno, msg)
+            level_name = logging.getLevelName(record.levelno)
+            logger.opt(depth=1, exception=None).log(level_name, msg)
         except Exception:
             self.handleError(record)
 
