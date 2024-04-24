@@ -101,7 +101,7 @@ def apply_terraform_module(module_path, ticket_id, vm_name, created=True):
     except Exception as e:
         print('Error at apply terraform :')
         print(e)
-        note = f'Create VM {vm_name} failed.'
+        note = f'Create VM {vm_name} failed'
         ManageEngine().add_note_to_ticket(ticket_id, note)
         logger.error(f'apply terraform for {vm_name} failed cause: {e}')
         raise e
