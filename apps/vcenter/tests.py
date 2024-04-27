@@ -1,7 +1,18 @@
 from unittest.mock import patch
 from django.test import TestCase
 from django.urls import reverse
-manage_engine_request_content= '''{
+
+
+class TestCreateVMView(TestCase):
+    def setUp(self):
+        # Mock the necessary functions
+        self.mock_create_module = patch('apps.vcenter.views.create_terraform_module').start()
+        self.mock_render_template = patch('apps.vcenter.views.render_template').start()
+        self.mock_apply_terraform = patch('apps.vcenter.views.apply_terraform_module').start()
+
+        self.mock_create_module.return_value = 'modules/test_modules/'
+        self.mock_render_template.return_value = 'ok'
+        self.manage_engine_request_content = '''{
     "request": {
         "ola_due_by_time": null,
         "resolution": {
@@ -42,19 +53,17 @@ manage_engine_request_content= '''{
     }}
 }'''
 
+    def tearDown(self):
+        # Stop the patching
+        patch.stopall()
 
-class TestCreateVMView(TestCase):
-
-    @patch('apps.vcenter.views.create_terraform_module')
-    @patch('apps.vcenter.views.render_template')
-    @patch('apps.vcenter.views.apply_terraform_module')
-    def test_successful_vm_creation(self, mock_apply_terraform, mock_render_template, mock_create_module):
-        mock_create_module.return_value = 'modules/test_modules/'
-        mock_render_template.return_value = 'ok'
-        mock_apply_terraform.return_value = {'result': 'success'}
+    def test_successful_vm_creation(self):
+        self.mock_create_module.return_value = 'modules/test_modules/'
+        self.mock_render_template.return_value = 'ok'
+        self.mock_apply_terraform.return_value = {'result': 'success'}
 
         data = {
-            'content': b
+            'content': self.manage_engine_request_content
         }
 
         response = self.client.post(reverse('create_machine'), data=data)
@@ -62,16 +71,13 @@ class TestCreateVMView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, {'terraform_result': {'result': 'success'}})
 
-    @patch('apps.vcenter.views.create_terraform_module')
-    @patch('apps.vcenter.views.render_template')
-    @patch('apps.vcenter.views.apply_terraform_module')
-    def test_unsuccessful_vm_creation(self, mock_apply_terraform, mock_render_template, mock_create_module):
-        mock_create_module.return_value = 'modules/test_modules/'
-        mock_render_template.return_value = 'ok'
-        mock_apply_terraform.return_value = {'error': ''}
+    def test_unsuccessful_vm_creation(self):
+        self.mock_create_module.return_value = 'modules/test_modules/'
+        self.mock_render_template.return_value = 'ok'
+        self.mock_apply_terraform.return_value = {'error': ''}
 
         data = {
-            'content': b
+            'content': self.manage_engine_request_content
         }
 
         response = self.client.post(reverse('create_machine'), data=data)
