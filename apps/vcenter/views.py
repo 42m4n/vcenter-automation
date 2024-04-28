@@ -50,11 +50,14 @@ class CreateVMView(views.APIView):
                 return response.Response({'terraform_result': tf_result})
             else:
                 print('error in serializer in view')
-
+                note = f'Create machin request failed. Check logs.'
+                ManageEngine().add_note_to_ticket(ticket_id, note)
                 return response.Response(serializer.errors, status=400)
         except Exception as e:
             print('>>>>>>>>>>>>>Exception in view:')
             print(e)
+            note = f'Create {vm_name} failed. Check logs.'
+            ManageEngine().add_note_to_ticket(ticket_id, note)
             return response.Response({'error': str(e)}, status=400)
 
     def put(self, request, vm_name=None):
@@ -94,9 +97,11 @@ class CreateVMView(views.APIView):
                     return response.Response({'terraform_result': tf_result}, status=400)
 
                 return response.Response({'terraform_result': tf_result})
-
+            note = f'Update {vm_name} request failed. Check logs.'
+            ManageEngine().add_note_to_ticket(ticket_id, note)
             return response.Response(serializer.errors, status=400)
 
         except Exception as e:
-
+            note = f'Update {vm_name} failed. Check logs.'
+            ManageEngine().add_note_to_ticket(ticket_id, note)
             return response.Response({'error': str(e)}, status=400)

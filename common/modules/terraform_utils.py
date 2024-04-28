@@ -91,24 +91,17 @@ def apply_terraform_module(module_path, ticket_id, vm_name, created=True):
         formatted_result, success = format_terraform_result(terraform_result)
         logger.info(f'Apply terraform for {vm_name} result: {success} , {terraform_result}')
         if success:
-            if not created:
-                note = f'VM {vm_name} updated successfully.'
-            else:
-                note = f'VM {vm_name} created successfully.'
-            # ToDo: use celery and async request
-            print('success apply and format')
-            ManageEngine().add_note_to_ticket(ticket_id, note)
-            print('after send note S')
+            note = f'VM {vm_name} {"created" if created else "updated"} successfully.'
         else:
-            note = f'Create VM {vm_name} failed.'
-            ManageEngine().add_note_to_ticket(ticket_id, note)
-            print('after send note F')
+            note = f'{"Create" if created else "Update"} VM {vm_name} failed.'
+
+        ManageEngine().add_note_to_ticket(ticket_id, note)
 
         return formatted_result
     except Exception as e:
         print('Error at apply terraform :')
         print(e)
-        note = f'Create VM {vm_name} failed.'
+        note = f'Create VM {vm_name} failed'
         ManageEngine().add_note_to_ticket(ticket_id, note)
         logger.error(f'apply terraform for {vm_name} failed cause: {e}')
         raise e
