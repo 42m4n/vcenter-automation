@@ -1,7 +1,7 @@
 import json
 
 from rest_framework import views, response
-
+from loguru import logger
 from apps.vcenter.serializers import CreateVMSerializer, UpdateVMSerializer, ManageEngineSerializer
 from common.configs import TerraformConf, VCenterConf
 from common.modules.manage_engine import ManageEngine
@@ -12,13 +12,12 @@ from common.modules.terraform_utils import create_terraform_module, render_templ
 class CreateVMView(views.APIView):
     def post(self, request):
         try:
-
             udf_serializer = ManageEngineSerializer(data=request.data)
             udf_serializer.is_valid(raise_exception=True)
-            udf_data = json.loads(udf_serializer.validated_data['content'])
-            ticket_request = udf_data['request']
-            ticket_id = ticket_request['id']
-            udf_fields = ticket_request['udf_fields']
+            udf_data = json.loads(udf_serializer.validated_data.get('content'))
+            ticket_request = udf_data.get('request')
+            ticket_id = ticket_request.get('id')
+            udf_fields = ticket_request.get('udf_fields')
 
             mapped_data = {}
             udf_fields_map = ManageEngine().udf_fields_mapping
@@ -63,10 +62,10 @@ class CreateVMView(views.APIView):
 
             udf_serializer = ManageEngineSerializer(data=request.data)
             udf_serializer.is_valid(raise_exception=True)
-            udf_data = json.loads(udf_serializer.validated_data['content'])
-            ticket_request = udf_data['request']
-            ticket_id = ticket_request['id']
-            udf_fields = ticket_request['udf_fields']
+            udf_data = json.loads(udf_serializer.validated_data.get('content'))
+            ticket_request = udf_data.get('request')
+            ticket_id = ticket_request.get('id')
+            udf_fields = ticket_request.get('udf_fields')
 
             mapped_data = {}
             udf_fields_map = ManageEngine().udf_fields_mapping
@@ -85,10 +84,15 @@ class CreateVMView(views.APIView):
                 })
                 module_path = get_module_path(vm_name)
                 keep_old_version(module_path)
+                logger.info(f'old version of {vm_name} copied')
                 render_template(TerraformConf.template_path, terraform_vars,
                                 f'{module_path}/terraform.tfvars')
                 tf_result = apply_terraform_module(module_path, ticket_id=ticket_id, vm_name=vm_name, created=False)
-                # Todo: handle tf_result status code for errors in apply
+                if 'error' in tf_result:
+                    print('error in apply in view')
+                    print('terraform_result', tf_result)
+                    return response.Response({'terraform_result': tf_result}, status=400)
+
                 return response.Response({'terraform_result': tf_result})
 
             return response.Response(serializer.errors, status=400)
