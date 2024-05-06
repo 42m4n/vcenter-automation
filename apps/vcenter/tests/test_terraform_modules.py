@@ -3,7 +3,7 @@ import shutil
 
 from django.test import TestCase
 
-from common.modules.terraform_utils import render_template, check_directory_existence
+from common.modules.terraform_utils import render_template, check_directory_existence, format_terraform_result
 
 
 class RenderTemplateTestCase(TestCase):
@@ -51,3 +51,46 @@ class CheckDirectoryExistenceTestCase(TestCase):
         self.assertFalse(check_directory_existence(self.test_vm_name_2, self.test_directory))
 
 
+class CreateTerraformModuleTestCase(TestCase):
+    ...
+
+
+class FormatTerraformResultTestCase(TestCase):
+    def test_successful_execution(self):
+        terraform_result = (0, "Plan: 1 to add, 2 to change, 3 to destroy", "")
+        result_dict, success = format_terraform_result(terraform_result)
+        self.assertTrue(success)
+        self.assertEqual(result_dict['add'], 1)
+        self.assertEqual(result_dict['change'], 2)
+        self.assertEqual(result_dict['destroy'], 3)
+
+    def test_failed_execution(self):
+        terraform_result = (1, "", "Error: Something went wrong")
+        result_dict, success = format_terraform_result(terraform_result)
+        self.assertFalse(success)
+        self.assertEqual(result_dict['error'], "Error: Something went wrong")
+
+    def test_exception_handling(self):
+        with self.assertRaises(Exception):
+            terraform_result = (1, "")
+            format_terraform_result(terraform_result)
+
+
+class ApplyTerraformModuleTestCase(TestCase):
+    ...
+
+
+class GenerateModuleNameTestCase(TestCase):
+    ...
+
+
+class InitializeTerraformTestCase(TestCase):
+    ...
+
+
+class GetModulePathTestCase(TestCase):
+    ...
+
+
+class KeepOldVersionTestCase(TestCase):
+    ...
