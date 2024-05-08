@@ -1,9 +1,14 @@
 import os
 import shutil
+from datetime import date
+from unittest.mock import patch
 
 from django.test import TestCase
 
-from common.modules.terraform_utils import render_template, check_directory_existence, format_terraform_result
+from common.configs import Path
+from common.exceptions import VMDirectoryExistsException
+from common.modules.terraform_utils import render_template, check_directory_existence, format_terraform_result, \
+    generate_module_name, keep_old_version, get_module_path
 
 
 class RenderTemplateTestCase(TestCase):
@@ -81,7 +86,14 @@ class ApplyTerraformModuleTestCase(TestCase):
 
 
 class GenerateModuleNameTestCase(TestCase):
-    ...
+
+    def test_generate_module_name(self):
+        vm_name = "test_vm"
+        expected_prefix = str(date.today()).replace("-", "_")
+        unique_name = generate_module_name(vm_name)
+
+        self.assertTrue(unique_name.startswith(expected_prefix))
+        self.assertTrue(vm_name in unique_name)
 
 
 class InitializeTerraformTestCase(TestCase):
@@ -89,8 +101,48 @@ class InitializeTerraformTestCase(TestCase):
 
 
 class GetModulePathTestCase(TestCase):
-    ...
+    def setUp(self):
+        self.test_directory = 'test_dir'
+        self.test_vm_name_1 = '2024_12_11_222_test_vm_name_1'
+        self.exist_vm_path = os.path.join(self.test_directory, self.test_vm_name_1)
+
+        os.makedirs(self.exist_vm_path, exist_ok=True)
+
+    def tearDown(self):
+        shutil.rmtree(self.test_directory)
+
+    def test_get_module_path_found(self):
+        exist_vm_path = os.path.join(Path.vm_modules_path, self.test_vm_name_1)
+        os.makedirs(exist_vm_path, exist_ok=True)
+        path = get_module_path(self.test_vm_name_1)
+        self.assertEqual(path, f'{Path.vm_modules_path}/{self.test_vm_name_1}')
+        shutil.rmtree(self.test_vm_name_1)
+
+    @patch('os.listdir')
+    def test_get_module_path_not_found(self, mock_listdir):
+        mock_listdir.return_value = [' other_dir']
+        with self.assertRaises(VMDirectoryExistsException):
+            get_module_path('vm_name')
+
+    @patch('os.listdir')
+    def test_get_module_path_exception(self, mock_listdir):
+        mock_listdir.side_effect = Exception('Mocked exception')
+        with self.assertRaises(Exception):
+            get_module_path('vm_name')
 
 
 class KeepOldVersionTestCase(TestCase):
-    ...
+    def setUp(self):
+        self.test_directory = 'test_dir'
+
+    @patch('os.makedirs')
+    @patch('shutil.copy')
+    def test_keep_old_version_success(self, mock_copy, mock_makedirs):
+        keep_old_version(self.test_directory)
+        mock_makedirs.assert_called_once_with(f'{self.test_directory}/old', exist_ok=True)
+        mock_copy.assert_called_once()
+
+    @patch('os.makedirs', side_effect=Exception('Mocked exception'))
+    def test_keep_old_version_exception(self, mock_makedirs):
+        with self.assertRaises(Exception):
+            keep_old_version(self.test_directory)
