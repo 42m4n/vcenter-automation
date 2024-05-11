@@ -100,6 +100,24 @@ class ApplyTerraformModuleTestCase(TestCase):
         mock_manage_engine_note.assert_called_once_with('mock_ticket_id', 'VM mock_vm_name created successfully.')
         self.assertEqual(result, {"add": 1, "change": 2, "destroy": 0})
 
+    @patch('common.modules.terraform_utils.Terraform')
+    @patch('common.modules.manage_engine.ManageEngine.add_note_to_ticket')
+    @patch('common.modules.terraform_utils.format_terraform_result')
+    def test_apply_terraform_module_failure(self, mock_format_terraform_result, mock_manage_engine_note,
+                                            mock_terraform):
+        mock_tf_instance = MagicMock()
+        mock_tf_instance.apply.side_effect = Exception("Error occurred during apply")
+        mock_terraform.return_value = mock_tf_instance
+
+        mock_manage_engine_note.return_value = ''
+        mock_format_terraform_result.return_value = ({}, False)
+
+        with self.assertRaises(Exception):
+            apply_terraform_module('mock_module_path', 'mock_ticket_id', 'mock_vm_name', created=True)
+
+        mock_tf_instance.apply.assert_called_once_with(skip_plan=True)
+        mock_manage_engine_note.assert_called_once_with('mock_ticket_id', 'Create VM mock_vm_name failed.')
+
 
 class GenerateModuleNameTestCase(TestCase):
 
@@ -119,24 +137,27 @@ class InitializeTerraformTestCase(TestCase):
 class GetModulePathTestCase(TestCase):
     def setUp(self):
         self.test_directory = 'test_dir'
-        self.test_vm_name_1 = '2024_12_11_222_test_vm_name_1'
-        self.exist_vm_path = os.path.join(self.test_directory, self.test_vm_name_1)
+        self.test_vm_dir = '3024_12_11_222_test_vm_name_1'
+        self.test_vm_name = 'test_vm_name_1'
+        self.exist_vm_path = os.path.join(self.test_directory, self.test_vm_dir, self.test_vm_name)
 
         os.makedirs(self.exist_vm_path, exist_ok=True)
 
     def tearDown(self):
         shutil.rmtree(self.test_directory)
 
-    def test_get_module_path_found(self):
-        exist_vm_path = os.path.join(Path.vm_modules_path, self.test_vm_name_1)
-        os.makedirs(exist_vm_path, exist_ok=True)
-        path = get_module_path(self.test_vm_name_1)
-        self.assertEqual(path, f'{Path.vm_modules_path}/{self.test_vm_name_1}')
-        shutil.rmtree(self.test_vm_name_1)
+    @patch('os.listdir')
+    @patch('common.modules.terraform_utils.Path')
+    def test_get_module_path_found(self, mock_path, mock_listdir):
+        mock_listdir.return_value = [self.test_vm_dir]
+        mock_path.vm_modules_path = self.test_directory
+
+        path = get_module_path(self.test_vm_name)
+        self.assertEqual(path, f'{mock_path.vm_modules_path}/{self.test_vm_dir}')
 
     @patch('os.listdir')
     def test_get_module_path_not_found(self, mock_listdir):
-        mock_listdir.return_value = [' other_dir']
+        mock_listdir.return_value = ['other_dir']
         with self.assertRaises(VMDirectoryExistsException):
             get_module_path('vm_name')
 
