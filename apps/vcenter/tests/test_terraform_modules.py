@@ -1,14 +1,14 @@
 import os
 import shutil
 from datetime import date
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from django.test import TestCase
 
 from common.configs import Path
 from common.exceptions import VMDirectoryExistsException
 from common.modules.terraform_utils import render_template, check_directory_existence, format_terraform_result, \
-    generate_module_name, keep_old_version, get_module_path
+    generate_module_name, keep_old_version, get_module_path, apply_terraform_module
 
 
 class RenderTemplateTestCase(TestCase):
@@ -82,7 +82,23 @@ class FormatTerraformResultTestCase(TestCase):
 
 
 class ApplyTerraformModuleTestCase(TestCase):
-    ...
+    @patch('common.modules.terraform_utils.Terraform')
+    @patch('common.modules.manage_engine.ManageEngine.add_note_to_ticket')
+    @patch('common.modules.terraform_utils.format_terraform_result')
+    def test_apply_terraform_module_success(self, mock_format_terraform_result, mock_manage_engine_note,
+                                            mock_terraform):
+        mock_tf_instance = MagicMock()
+        mock_tf_instance.apply.return_value = (0, 'mocked_terraform_result', 'error')
+        mock_terraform.return_value = mock_tf_instance
+
+        mock_manage_engine_note.return_value = ''
+        mock_format_terraform_result.return_value = ({"add": 1, "change": 2, "destroy": 0}, True)
+
+        result = apply_terraform_module('mock_module_path', 'mock_ticket_id', 'mock_vm_name', created=True)
+
+        mock_tf_instance.apply.assert_called_once_with(skip_plan=True)
+        mock_manage_engine_note.assert_called_once_with('mock_ticket_id', 'VM mock_vm_name created successfully.')
+        self.assertEqual(result, {"add": 1, "change": 2, "destroy": 0})
 
 
 class GenerateModuleNameTestCase(TestCase):
