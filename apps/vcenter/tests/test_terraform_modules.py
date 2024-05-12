@@ -20,7 +20,7 @@ class RenderTemplateTestCase(TestCase):
         shutil.rmtree(self.test_directory)
 
     def test_render_template(self):
-        template_path = 'terraform/terraform.tfvars'
+        template_path = 'terraform/terraform.tfvars.j2'
         variables = {'key': 'value'}
         result_dir = 'test_dir'
         result_path = f'{result_dir}/result.tfvars'
