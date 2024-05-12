@@ -13,6 +13,7 @@ class CreateVMView(views.APIView):
     def post(self, request):
         try:
             udf_serializer = ManageEngineSerializer(data=request.data)
+
             udf_serializer.is_valid(raise_exception=True)
             udf_data = json.loads(udf_serializer.validated_data.get('content'))
             ticket_request = udf_data.get('request')
@@ -23,6 +24,7 @@ class CreateVMView(views.APIView):
             udf_fields_map = ManageEngine().udf_fields_mapping
 
             for key, value in udf_fields.items():
+
                 if key in udf_fields_map:
                     mapped_data[udf_fields_map[key]] = value
 
@@ -102,6 +104,4 @@ class CreateVMView(views.APIView):
             return response.Response(serializer.errors, status=400)
 
         except Exception as e:
-            note = f'Update {vm_name} failed. Check logs.'
-            ManageEngine().add_note_to_ticket(ticket_id, note)
             return response.Response({'error': str(e)}, status=400)
