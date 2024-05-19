@@ -11,7 +11,6 @@ from common.modules.terraform_utils import create_terraform_module, render_templ
 class CreateVMView(views.APIView):
     def post(self, request):
         try:
-            print('helooooooooo')
             serializer = CreateVMSerializer(data=request.data)
             if serializer.is_valid():
                 terraform_vars = serializer.validated_data
@@ -40,9 +39,9 @@ class CreateVMView(views.APIView):
                 return response.Response(serializer.errors, status=400)
         except Exception as e:
             print('>>>>>>>>>>>>>Exception in view:')
-            # print(e)
+            print(e)
             note = f'Create {vm_name} failed. Check logs.'
-            # ManageEngine().add_note_to_ticket(ticket_id, note)
+            ManageEngine().add_note_to_ticket(ticket_id, note)
             return response.Response({'error': str(e)}, status=400)
 
     def put(self, request, vm_name=None):
