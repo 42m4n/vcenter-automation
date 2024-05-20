@@ -18,6 +18,7 @@ class CreateVMSerializer(serializers.Serializer):
     network_adapter_type = serializers.CharField()
     disk_size = serializers.IntegerField()
     disk_label = serializers.CharField()
+    ticket_id = serializers.CharField()
 
 
 class UpdateVMSerializer(serializers.Serializer):
@@ -32,3 +33,5 @@ class UpdateVMSerializer(serializers.Serializer):
     network_adapter_type = serializers.CharField(required=False)
     disk_size = serializers.IntegerField(required=False)
     disk_label = serializers.CharField(required=False)
+    ticket_id = serializers.CharField()
+
