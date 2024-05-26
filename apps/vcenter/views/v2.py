@@ -1,7 +1,7 @@
 from loguru import logger
 from rest_framework import views, response
 
-from apps.vcenter.serializers import CreateVMSerializer, UpdateVMSerializer
+from apps.vcenter.serializers.v2 import CreateVMSerializer, UpdateVMSerializer
 from common.configs import TerraformConf, VCenterConf
 from common.modules.manage_engine import ManageEngine
 from common.modules.terraform_utils import create_terraform_module, render_template, apply_terraform_module, \
