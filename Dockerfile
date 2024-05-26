@@ -1,5 +1,5 @@
 
-FROM repo.asax.ir/python:3.8
+FROM repo.asax.ir/python:3.11
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -20,4 +20,3 @@ COPY . .
 
 EXPOSE 8002
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8002"]

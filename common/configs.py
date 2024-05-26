@@ -1,7 +1,7 @@
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 
-load_dotenv(dotenv_path='./common/configs.env')
+# load_dotenv(dotenv_path='./common/configs.env')
 
 
 class Path:
@@ -23,8 +23,8 @@ class VCenterConf:
 
 
 class ManageEngineConf:
-    manage_engine_address = os.getenv("MANAGE_ENGINE_ADDRESS", "https://172.20.29.194")
-    manage_engine_token = os.getenv("MANAGE_ENGINE_TOKEN", "6619FACD-CB5D-430A-B564-705D0887E7D1")
+    manage_engine_address = os.getenv("MANAGE_ENGINE_ADDRESS")
+    manage_engine_token = os.getenv("MANAGE_ENGINE_TOKEN")
     manage_engine_done_status = os.getenv("MANAGE_ENGINE_DONE_STATUS", "4")
     udf_fields_mapping = {
         "udf_pick_5415": "datacenter",
