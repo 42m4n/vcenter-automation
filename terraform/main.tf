@@ -38,6 +38,7 @@ resource "vsphere_virtual_machine" "standalone" {
   num_cores_per_socket = var.num_cores_per_socket
 
   memory   = var.ram
+  memory_reservation = var.ram
   guest_id = var.guest_os
 
   network_interface {
