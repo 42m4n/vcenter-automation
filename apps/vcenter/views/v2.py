@@ -5,7 +5,7 @@ from apps.vcenter.serializers.v2 import CreateVMSerializer, UpdateVMSerializer
 from common.configs import TerraformConf, VCenterConf
 from common.modules.manage_engine import ManageEngine
 from common.modules.terraform_utils import create_terraform_module, render_template, apply_terraform_module, \
-    get_module_path, keep_old_version
+    get_module_path, keep_old_version, read_existing_tfvars
 
 
 class CreateVMView(views.APIView):
@@ -16,7 +16,6 @@ class CreateVMView(views.APIView):
                 terraform_vars = serializer.validated_data
                 terraform_vars.update({
                     'vsphere_user': VCenterConf.user,
-                    'vsphere_password': VCenterConf.password,
                     'vsphere_vcenter': VCenterConf.vcenter_address
                 })
                 ticket_id = terraform_vars['ticket_id']
@@ -49,15 +48,14 @@ class CreateVMView(views.APIView):
 
             serializer = UpdateVMSerializer(data=request.data)
             if serializer.is_valid():
-                terraform_vars = serializer.validated_data
+                module_path = get_module_path(vm_name)
+                terraform_vars = read_existing_tfvars(f'{module_path}/terraform.tfvars')
+                terraform_vars.update(serializer.validated_data)
                 terraform_vars.update({
-                    'name': vm_name,
                     'vsphere_user': VCenterConf.user,
-                    'vsphere_password': VCenterConf.password,
                     'vsphere_vcenter': VCenterConf.vcenter_address
                 })
                 ticket_id = terraform_vars['ticket_id']
-                module_path = get_module_path(vm_name)
                 keep_old_version(module_path)
                 logger.info(f'old version of {vm_name} copied')
                 render_template(TerraformConf.template_path, terraform_vars,

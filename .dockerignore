@@ -1,0 +1,10 @@
+.venv
+.vscode
+logs
+modules
+db.sqlite3
+README.md
+*.log
+*.pot
+*.pyc
+__pycache__/

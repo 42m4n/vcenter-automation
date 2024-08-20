@@ -1,15 +1,30 @@
-version: '3.7'
 services:
   vcenter-api:
-    image: vcenter-automation-api:latest
+    image: gitops.asax.ir/infrastructure-automation-team/virtualization-automation/vcenter-automation:slim
     container_name: vcenter-api
-    command: python manage.py runserver_plus 0.0.0.0:8002 --cert-file ./certs/cert.pem --key-file ./certs/key.pem
-
-    ports:
-      - "8002:8002"
-    env_file:
-      - /opt/configs/vcenter_configs.env
+    command: python manage.py runserver 0.0.0.0:8000
+    expose:
+      - 8000
+    networks:
+      - traefik-net
     volumes:
-      - /opt/vcenter_logs:/app/logs
-      - /opt/vcenter_modules:/app/modules
+      - ./vcenter_logs:/app/logs
+      - ./vcenter_modules:/app/modules
+    env_file:
+      - ./.env
+    environment:
+      - TZ=Asia/Tehran
+      - TF_VAR_vsphere_password=$VSPHERE_PASSWORD
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-net
+      - traefik.http.routers.vcenter_api.entrypoints=vcenter
+      - traefik.http.routers.vcenter_api.rule=Host(`iaas-app.asax.ir`)
+      - traefik.http.routers.vcenter_api.tls=true
+      - traefik.http.routers.vcenter_api.tls.options=default
+      - traefik.http.services.vcenter_api.loadbalancer.server.port=8000
 
+networks:
+    traefik-net:
+      name: traefik-net
+      external: true

@@ -44,10 +44,19 @@ def create_terraform_module(vm_name, module_path=Path.vm_modules_path):
         if not created:
             unique_name = generate_module_name(vm_name)
             module_path = f"{module_path}/{unique_name}"
-            shutil.copytree(TerraformConf.base_init_path, module_path)
+            shutil.copytree(src=TerraformConf.base_init_path,
+                            dst=module_path,
+                            ignore=shutil.ignore_patterns('.terraform', '.terraform.lock.hcl')
+                            )
+            print(os.system("pwd"))
+            print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+            os.symlink(src='../../terraform/.terraform', dst=module_path+'/.terraform', target_is_directory=True)
+            print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+            os.symlink(src='../../terraform/.terraform.lock.hcl', dst=module_path+'/.terraform.lock.hcl', target_is_directory=True)
+            print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             logger.info(f'Base init path copied to {module_path}')
             target_file_path = f'{module_path}/{TerraformConf.binary_path}'
-            os.chmod(target_file_path, TerraformConf.chmode)
+            os.chmod(target_file_path, TerraformConf.chmod)
             logger.info(f'{target_file_path} chmod changed')
             return module_path
         else:
@@ -154,3 +163,16 @@ def keep_old_version(module_path):
         print(e)
         logger.error(f'Exception at keep_old_version : {e} ')
         raise e
+
+def read_existing_tfvars(file_path):
+    if not os.path.exists(file_path):
+        return {}
+    existing_vars = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            if '=' in line:
+                key, value = line.split('=', 1)
+                key = key.strip()
+                value = value.strip().strip('"')
+                existing_vars[key] = value
+    return existing_vars

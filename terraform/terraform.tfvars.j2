@@ -1,16 +1,20 @@
-vsphere_user = "{{ vsphere_user }}"
-vsphere_password = "{{ vsphere_password }}"
-vsphere_vcenter = "{{ vsphere_vcenter }}"
+vsphere_user           = "{{ vsphere_user }}"
+vsphere_vcenter        = "{{ vsphere_vcenter }}"
 vsphere_unverified_ssl = true
-datacenter = "{{ datacenter }}"
-cluster = "{{ cluster }}"
-datastore = "{{ datastore }}"
-network = "{{ network }}"
-name = "{{ name }}"
-cpu = {{ cpu }}
-ram = {{ ram }}
-guest_os = "{{ guest_os }}"
-network_adapter_type = "{{ network_adapter_type }}"
-disk_size = {{ disk_size }}
-disk_label = "{{ disk_label }}"
-num_cores_per_socket = "{{ num_cores_per_socket }}"
+datacenter             = "{{ datacenter }}"
+cluster                = "{{ cluster }}"
+datastore              = "{{ datastore }}"
+name                   = "{{ name }}"
+cpu                    = {{ cpu }}
+ram                    = {{ ram }}
+disksize               = "{{ disk_size }}"
+hostname               = "{{ hostname }}"
+ip_addr                = "{{ ip_addr }}"
+cidr                   = {{ cidr }}
+defaultGW              = "{{ defaultGW }}"
+{% if dns_server1 -%}dns_server1            = "{{ dns_server1 }}"
+{% endif -%}
+{% if dns_server2 -%}dns_server2            = "{{ dns_server2 }}"
+{% endif -%}
+vlan_id                = {{ vlan_id }}
+template-name          = "cloud-init-template"

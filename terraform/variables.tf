@@ -14,28 +14,25 @@ variable "vsphere_vcenter" {
 variable "vsphere_unverified_ssl" {
 }
 
-
 variable "datacenter" {
 }
 
 variable "cluster" {
 }
 
-
 #=========================#
 # vSphere virtual machine #
 #=========================#
-
 
 variable "datastore" {
 }
 
 variable "network" {
+  default = "VM Network"
 }
 
 variable "name" {
 }
-
 
 variable "cpu" {
 }
@@ -43,18 +40,44 @@ variable "cpu" {
 variable "ram" {
 }
 
-variable "guest_os" {
-}
-variable "network_adapter_type" {
-}
-
-
-variable "disk_size" {
+variable "disksize" {
+  default = ""
 }
 
-
-variable "disk_label" {
+variable "template-name" {
+  default = "Lin-Template-22.04 1403-02 v2"
 }
 
-variable "num_cores_per_socket" {
+variable "vlan_id" {
+  type = number
+}
+
+#=========================#
+#           OS            #
+#=========================#
+
+variable "hostname" {
+  type = string
+}
+
+variable "ip_addr" {
+  type = string
+}
+
+variable "cidr" {
+  type = number
+}
+
+variable "defaultGW" {
+  type = string
+}
+
+variable "dns_server1" {
+  type    = string
+  default = "172.20.28.41"
+}
+
+variable "dns_server2" {
+  type    = string
+  default = "172.20.28.42"
 }

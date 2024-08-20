@@ -33,7 +33,6 @@ class CreateVMView(views.APIView):
                 terraform_vars = serializer.validated_data
                 terraform_vars.update({
                     'vsphere_user': VCenterConf.user,
-                    'vsphere_password': VCenterConf.password,
                     'vsphere_vcenter': VCenterConf.vcenter_address
                 })
                 vm_name = terraform_vars['name']
@@ -84,7 +83,6 @@ class CreateVMView(views.APIView):
                 terraform_vars.update({
                     'name': vm_name,
                     'vsphere_user': VCenterConf.user,
-                    'vsphere_password': VCenterConf.password,
                     'vsphere_vcenter': VCenterConf.vcenter_address
                 })
                 module_path = get_module_path(vm_name)
