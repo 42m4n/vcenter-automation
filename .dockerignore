@@ -1,7 +1,10 @@
 .venv
 .vscode
+.git
+.gitignore
 logs
 modules
+terraform/.terraform*
 db.sqlite3
 README.md
 *.log

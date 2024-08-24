@@ -14,7 +14,7 @@ services:
       - ./.env
     environment:
       - TZ=Asia/Tehran
-      - TF_VAR_vsphere_password=$VSPHERE_PASSWORD
+      - TF_VAR_vsphere_password=""
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-net
