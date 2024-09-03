@@ -1,5 +1,6 @@
-from loguru import logger
 import logging
+
+from loguru import logger
 
 
 class DjangoLogHandler(logging.Handler):
@@ -18,4 +19,9 @@ log_format = "<green>{time:YYYY-MM-DD--HH:mm:ss}</green> [{level}] - [{name} > {
 logging.basicConfig(handlers=[DjangoLogHandler()], level=logging.INFO)
 
 # Configure Loguru to write logs to files with rotation
-logger.add("logs/{time:YYYY-MM-DD--HH-DD}.log", format=log_format, rotation="1 day", level="INFO")
+logger.add(
+    "logs/{time:YYYY-MM-DD--HH-DD}.log",
+    format=log_format,
+    rotation="1 day",
+    level="INFO",
+)

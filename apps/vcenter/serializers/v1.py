@@ -32,4 +32,3 @@ class UpdateVMSerializer(serializers.Serializer):
     network_adapter_type = serializers.CharField(required=False)
     disk_size = serializers.IntegerField(required=False)
     disk_label = serializers.CharField(required=False)
-

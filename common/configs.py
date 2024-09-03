@@ -1,17 +1,14 @@
-# from dotenv import load_dotenv
 import os
-
-# load_dotenv(dotenv_path='./common/configs.env')
 
 
 class Path:
-    vm_modules_path = 'modules'
+    vm_modules_path = "modules"
 
 
 class TerraformConf:
-    base_init_path = 'terraform/'
-    template_path = './terraform/terraform.tfvars.j2'
-    variables_path = './terraform/terraform.tfvars'
+    base_init_path = "terraform/"
+    template_path = "./terraform/terraform.tfvars.j2"
+    variables_path = "./terraform/terraform.tfvars"
     binary_path = ".terraform/providers/"
     chmod = 0o755
 

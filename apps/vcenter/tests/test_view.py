@@ -1,4 +1,5 @@
 from unittest.mock import patch
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -6,13 +7,17 @@ from django.urls import reverse
 class TestCreateVMView(TestCase):
     def setUp(self):
         # Mock the necessary functions
-        self.mock_create_module = patch('apps.vcenter.views.create_terraform_module').start()
-        self.mock_render_template = patch('apps.vcenter.views.render_template').start()
-        self.mock_apply_terraform = patch('apps.vcenter.views.apply_terraform_module').start()
+        self.mock_create_module = patch(
+            "apps.vcenter.views.create_terraform_module"
+        ).start()
+        self.mock_render_template = patch("apps.vcenter.views.render_template").start()
+        self.mock_apply_terraform = patch(
+            "apps.vcenter.views.apply_terraform_module"
+        ).start()
 
-        self.mock_create_module.return_value = 'modules/test_modules/'
-        self.mock_render_template.return_value = 'ok'
-        self.manage_engine_request_content = '''{
+        self.mock_create_module.return_value = "modules/test_modules/"
+        self.mock_render_template.return_value = "ok"
+        self.manage_engine_request_content = """{
     "request": {
         "ola_due_by_time": null,
         "resolution": {
@@ -51,52 +56,52 @@ class TestCreateVMView(TestCase):
         "status_code": 2000,
         "status": "success"
     }}
-}'''
+}"""
 
     def tearDown(self):
         # Stop the patching
         patch.stopall()
 
     def test_successful_vm_creation(self):
-        self.mock_create_module.return_value = 'modules/test_modules/'
-        self.mock_render_template.return_value = 'ok'
-        self.mock_apply_terraform.return_value = {'result': 'success'}
+        self.mock_create_module.return_value = "modules/test_modules/"
+        self.mock_render_template.return_value = "ok"
+        self.mock_apply_terraform.return_value = {"result": "success"}
 
-        data = {
-            'content': self.manage_engine_request_content
-        }
+        data = {"content": self.manage_engine_request_content}
 
-        response = self.client.post(reverse('create_machine'), data=data)
+        response = self.client.post(reverse("create_machine"), data=data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, {'terraform_result': {'result': 'success'}})
+        self.assertEqual(response.data, {"terraform_result": {"result": "success"}})
 
     def test_unsuccessful_vm_creation(self):
-        self.mock_create_module.return_value = 'modules/test_modules/'
-        self.mock_render_template.return_value = 'ok'
-        self.mock_apply_terraform.return_value = {'error': ''}
+        self.mock_create_module.return_value = "modules/test_modules/"
+        self.mock_render_template.return_value = "ok"
+        self.mock_apply_terraform.return_value = {"error": ""}
 
-        data = {
-            'content': self.manage_engine_request_content
-        }
+        data = {"content": self.manage_engine_request_content}
 
-        response = self.client.post(reverse('create_machine'), data=data)
+        response = self.client.post(reverse("create_machine"), data=data)
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, {'terraform_result': {'error': ''}})
+        self.assertEqual(response.data, {"terraform_result": {"error": ""}})
 
 
 class TestUpdateVMView(TestCase):
     def setUp(self):
         # Mock the necessary functions
-        self.mock_get_module_path = patch('apps.vcenter.views.get_module_path').start()
-        self.mock_render_template = patch('apps.vcenter.views.render_template').start()
-        self.mock_apply_terraform = patch('apps.vcenter.views.apply_terraform_module').start()
-        self.mock_keep_old_version = patch('apps.vcenter.views.keep_old_version').start()
+        self.mock_get_module_path = patch("apps.vcenter.views.get_module_path").start()
+        self.mock_render_template = patch("apps.vcenter.views.render_template").start()
+        self.mock_apply_terraform = patch(
+            "apps.vcenter.views.apply_terraform_module"
+        ).start()
+        self.mock_keep_old_version = patch(
+            "apps.vcenter.views.keep_old_version"
+        ).start()
 
-        self.mock_get_module_path.return_value = 'modules/test_modules/'
-        self.mock_render_template.return_value = 'ok'
-        self.manage_engine_request_content = '''{
+        self.mock_get_module_path.return_value = "modules/test_modules/"
+        self.mock_render_template.return_value = "ok"
+        self.manage_engine_request_content = """{
     "request": {
         "ola_due_by_time": null,
         "resolution": {
@@ -135,35 +140,37 @@ class TestUpdateVMView(TestCase):
         "status_code": 2000,
         "status": "success"
     }}
-}'''
+}"""
 
     def tearDown(self):
         # Stop the patching
         patch.stopall()
 
     def test_successful_vm_update(self):
-        self.mock_apply_terraform.return_value = {'result': 'success'}
-        vm_name = 'example_vm'
+        self.mock_apply_terraform.return_value = {"result": "success"}
+        vm_name = "example_vm"
 
-        data = {
-            'content': self.manage_engine_request_content
-        }
+        data = {"content": self.manage_engine_request_content}
 
-        response = self.client.put(reverse('update_machine', kwargs={'vm_name': vm_name}), data=data,
-                                   content_type='application/json')
+        response = self.client.put(
+            reverse("update_machine", kwargs={"vm_name": vm_name}),
+            data=data,
+            content_type="application/json",
+        )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, {'terraform_result': {'result': 'success'}})
+        self.assertEqual(response.data, {"terraform_result": {"result": "success"}})
 
     def test_unsuccessful_vm_update(self):
-        self.mock_apply_terraform.return_value = {'error': ''}
-        vm_name = 'example_vm'
-        data = {
-            'content': self.manage_engine_request_content
-        }
+        self.mock_apply_terraform.return_value = {"error": ""}
+        vm_name = "example_vm"
+        data = {"content": self.manage_engine_request_content}
 
-        response = self.client.put(reverse('update_machine', kwargs={'vm_name': vm_name}), data=data,
-                                   content_type='application/json')
+        response = self.client.put(
+            path=reverse("update_machine", kwargs={"vm_name": vm_name}),
+            data=data,
+            content_type="application/json",
+        )
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, {'terraform_result': {'error': ''}})
+        self.assertEqual(response.data, {"terraform_result": {"error": ""}})
