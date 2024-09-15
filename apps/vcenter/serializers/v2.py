@@ -14,7 +14,7 @@ class CreateVMSerializer(serializers.Serializer):
     cpu = serializers.IntegerField()
     num_cores_per_socket = serializers.IntegerField(required=False)
     ram = serializers.IntegerField()
-    guest_os = serializers.CharField(required=False)
+    template = serializers.CharField(required=False)
     network_adapter_type = serializers.CharField(required=False)
     disk_size = serializers.IntegerField(required=False)
     disk_label = serializers.CharField(required=False)

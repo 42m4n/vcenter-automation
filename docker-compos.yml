@@ -1,6 +1,6 @@
 services:
   vcenter-api:
-    image: gitops.asax.ir/infrastructure-automation-team/virtualization-automation/vcenter-automation:slim
+    image: gitops.asax.ir/infrastructure-automation-team/virtualization-automation/vcenter-automation:alpine
     container_name: vcenter-api
     command: python manage.py runserver 0.0.0.0:8000
     expose:
@@ -18,8 +18,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-net
-      - traefik.http.routers.vcenter_api.entrypoints=vcenter
-      - traefik.http.routers.vcenter_api.rule=Host(`iaas-app.asax.ir`)
+      - traefik.http.routers.vcenter_api.entrypoints=https
+      - traefik.http.routers.vcenter_api.rule=PathPrefix(`/api/v2/vcenter/`)
       - traefik.http.routers.vcenter_api.tls=true
       - traefik.http.routers.vcenter_api.tls.options=default
       - traefik.http.services.vcenter_api.loadbalancer.server.port=8000
