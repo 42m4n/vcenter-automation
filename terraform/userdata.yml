@@ -1,18 +1,20 @@
 #cloud-config
-users:
-  - name: fireman
-    sudo: ['ALL=(ALL) NOPASSWD:ALL']
-    shell: /bin/bash
-    passwd: "$6$uLKjphnot8zYzrhj$aDKQMU9kJIe5cE/f4VewlsTj0FXn8d2BacizU5q2vEkzs7FP7v7HKaElyFDjGYVlOgwgU4rDWg3lT4m/wjRfy/"
-    lock-passwd: false
+
+# users:
+#   - name: fireman
+#     sudo: ['ALL=(ALL) NOPASSWD:ALL']
+#     shell: /bin/bash
+#     passwd: "$6$uLKjphnot8zYzrhj$aDKQMU9kJIe5cE/f4VewlsTj0FXn8d2BacizU5q2vEkzs7FP7v7HKaElyFDjGYVlOgwgU4rDWg3lT4m/wjRfy/"
+#     lock-passwd: false
 growpart:
-  ignore_growroot_disabled: false
-  mode: auto
-  devices: [/dev/sda3]
+  ignore_growroot_disabled: true
+  mode: growpart
+  devices: 
+    - /dev/sda6
 bootcmd:
   - echo "" > /etc/machine-id
   - if [ -e /var/lib/dbus/machine-id ]; then rm /var/lib/dbus/machine-id; fi
   - ln -sf /etc/machine-id /var/lib/dbus/machine-id
 runcmd:
-  - [lvextend, -rl, +100%FREE, /dev/ubuntu-vg/ubuntu-lv]
+  - [lvextend, -rl, +100%FREE, /dev/vg-var/lv-var]
   - systemd-machine-id-setup

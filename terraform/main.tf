@@ -20,30 +20,30 @@ data "vsphere_datastore" "datastore" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-data "vsphere_host" "my_esxi_host" {
+data "vsphere_virtual_machine" "template-ubuntu22" {
+  name          = var.template-name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-data "vsphere_virtual_machine" "template-ubuntu22" {
-  name          = var.template-name
+data "vsphere_distributed_virtual_switch" "dvs" {
+  name          = var.dvswitch
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 #===============================================================================
 # vSphere Resources
 #===============================================================================
 
-resource "vsphere_host_port_group" "PortGroup" {
-  host_system_id = data.vsphere_host.my_esxi_host.id
-  virtual_switch_name = "vSwitch0"
-  name = var.name
-  vlan_id = var.vlan_id
+resource "vsphere_distributed_port_group" "PortGroup" {
+  name                            = var.name
+  distributed_virtual_switch_uuid = data.vsphere_distributed_virtual_switch.dvs.id
+  vlan_id                         = var.vlan_id
   provisioner "local-exec" {
     command = "sleep 20"
   }
 }
 data "vsphere_network" "created_net" {
-  depends_on = [ vsphere_host_port_group.PortGroup ]
-  name = var.name
+  depends_on    = [vsphere_distributed_port_group.PortGroup]
+  name          = var.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 resource "vsphere_virtual_machine" "standalone" {
@@ -57,10 +57,9 @@ resource "vsphere_virtual_machine" "standalone" {
   memory                       = var.ram
   memory_reservation           = var.ram
   guest_id                     = data.vsphere_virtual_machine.template-ubuntu22.guest_id
-  folder                       = "terraform"
+  folder                       = var.folder
   extra_config_reboot_required = true
   cpu_hot_add_enabled          = true
-  host_system_id               = data.vsphere_host.my_esxi_host.id
 
   network_interface {
     network_id   = data.vsphere_network.created_net.id
@@ -78,6 +77,7 @@ resource "vsphere_virtual_machine" "standalone" {
       linux_options {
         host_name = var.hostname
         domain    = "asadc.local"
+        time_zone = "Asia/Tehran"
       }
       network_interface {
         ipv4_address = var.ip_addr

@@ -8,10 +8,11 @@ variable "vsphere_user" {
 variable "vsphere_password" {
 }
 
-variable "vsphere_vcenter" {
+variable "vsphere_server" {
 }
 
 variable "vsphere_unverified_ssl" {
+  default = false
 }
 
 variable "datacenter" {
@@ -23,6 +24,13 @@ variable "cluster" {
 #=========================#
 # vSphere virtual machine #
 #=========================#
+variable "dvswitch" {
+
+}
+
+variable "folder" {
+
+}
 
 variable "datastore" {
 }
@@ -45,7 +53,7 @@ variable "disksize" {
 }
 
 variable "template-name" {
-  default = "Lin-Template-22.04 1403-02 v2"
+  type = string
 }
 
 variable "vlan_id" {

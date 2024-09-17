@@ -1,9 +1,13 @@
 vsphere_user           = "{{ vsphere_user }}"
-vsphere_vcenter        = "{{ vsphere_vcenter }}"
+vsphere_server         = "{{ vsphere_vcenter }}"
 vsphere_unverified_ssl = true
 datacenter             = "{{ datacenter }}"
 cluster                = "{{ cluster }}"
 datastore              = "{{ datastore }}"
+dvswitch               = "DSwitch-SRV"
+folder                 = "AutomationFolder"
+template-name          = "{{ template }}"
+
 name                   = "{{ name }}"
 cpu                    = {{ cpu }}
 ram                    = {{ ram }}
@@ -12,9 +16,8 @@ hostname               = "{{ hostname }}"
 ip_addr                = "{{ ip_addr }}"
 cidr                   = {{ cidr }}
 defaultGW              = "{{ defaultGW }}"
+vlan_id                = {{ vlan_id }}
 {% if dns_server1 -%}dns_server1            = "{{ dns_server1 }}"
 {% endif -%}
 {% if dns_server2 -%}dns_server2            = "{{ dns_server2 }}"
 {% endif -%}
-vlan_id                = {{ vlan_id }}
-template-name          = "cloud-init-template"

@@ -28,6 +28,7 @@ class CreateVMView(views.APIView):
                 module_path = create_terraform_module(vm_name)
                 log_file = f"{module_path}/{vm_name}_creation.log"
                 logger.add(log_file)
+                logger.info(f"request.data: {request.data}")
                 logger.info(f"Starting VM creation process for {vm_name}")
                 render_template(
                     TerraformConf.template_path,
